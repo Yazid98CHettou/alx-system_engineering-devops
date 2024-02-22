@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+#Bash script that display number from 1 to 20 ...
 i="1"
 while [ $i -le 20 ]
 do
