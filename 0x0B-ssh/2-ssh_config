@@ -1,7 +1,7 @@
 # This is the ssh client system-wide configuration file
 Host *
     ForwardX11 yes
-    PasswordAuthentication no
+    PasswordAuthentication yes
     IdentityFile ~/.ssh/school
     SendEnv LANG LC_*
     HashKnownHosts yes
