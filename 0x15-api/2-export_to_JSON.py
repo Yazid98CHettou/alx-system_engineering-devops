@@ -1,18 +1,30 @@
 #!/usr/bin/python3
-
+""" This script consumes API to retrieve todos by user id and exports data to json"""
+from collections import OrderedDict
 import json
-import requests as r
-import sys
+import requests
+from sys import argv
 
 if __name__ == '__main__':
-    user_id = sys.argv[1]
-    url = "https://jsonplaceholder.typicode.com/"
-    usr = r.get(url + "users/{}".format(user_id)).json()
-    username = usr.get("username")
-    to_do = r.get(url + "todos", params={"user_id": user_id}).json()
+    """ get user id by argv use HTTP GET method """
+    user_id = argv[1]
+    todo_params = {'userId': user_id}
+    url_todo = 'https://jsonplaceholder.typicode.com/todos'
+    res_todo = requests.get(url_todo, params=todo_params)
+    todos = res_todo.json()
+    user_params = {'id': user_id}
+    url_user = 'https://jsonplaceholder.typicode.com/users'
+    res_user = requests.get(url_user, params=user_params)
+    user = res_user.json()[0]
+    username = user['username']
+    list_tasks = []
+    for todo in todos:
+        dict_task = {
+            'task': todo['title'],
+            'completed': todo['completed'],
+            'username': username}
+        list_tasks.append(OrderedDict(dict_task))
+    result = {user_id: list_tasks}
+    with open('{}.json'.format(user_id), 'w') as f:
+        f.write(json.dumps(result))
 
-    with open("{}.json".format(user_id), "w") as jsonfile:
-        json.dump({user_id: [{"task": e.get("title"),
-                              "completed": e.get("completed"),
-                              "username": username} for e in to_do]},
-                  jsonfile)
