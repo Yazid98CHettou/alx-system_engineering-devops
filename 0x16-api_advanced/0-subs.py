@@ -1,15 +1,16 @@
 #!/usr/bin/python3
-import requests
-from sys import argv
+
+import requests as r
 
 
 def number_of_subscribers(subreddit):
-    headers = {'User-Agent': 'Yony'}
     url = "https://www.reddit.com/r/{}/about.json".format(subreddit)
-    res = requests.get(url, headers=headers, allow_redirects=False)
-    if res.status_code == requests.codes.ok:
-        res_json = res.json()
-        subscribers = res_json['data']['subscribers']
-    else:
-        subscribers = 0
-    return subscribers
+    headers = {
+        "User-Agent": "Mozilla/5.0 (X11; Linux x86_64; rv:73.0) \
+        Gecko/20100101 Firefox/73.0"
+    }
+    response = r.get(url, headers=headers, allow_redirects=False)
+    if response.status_code == 404:
+        return 0
+    results = response.json().get("data")
+    return results.get("subscribers")

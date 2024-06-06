@@ -1,25 +1,25 @@
 #!/usr/bin/python3
-import requests
-""" edit prototype for handle pagination """
+
+import requests as r
 
 
-def recurse(subreddit, hot_list=[], after='null'):
-    """ recursively call api """
-    headers = {'User-Agent': 'Yony'}
-    parametrs = {'after': after}
+def recurse(subreddit, hot_list=[], after=""):
     url = "https://www.reddit.com/r/{}/hot.json".format(subreddit)
-    res = requests.get(
-        url,
-        headers=headers,
-        allow_redirects=False,
-        parametrs=parametrs)
-    if res.status_code == requests.codes.ok:
-        res_json = res.json()['data']
-        for subr in res_json['children']:
-            hot_list.append(subr['data']['title'])
-        if res_json['after'] is not None:
-            """ call recursion if next page exist """
-            recurse(subreddit, hot_list, res_json['after'])
-    else:
+    headers = {
+        "User-Agent": "Mozilla/5.0 (X11; Linux x86_64; rv:73.0) \
+        Gecko/20100101 Firefox/73.0"
+        }
+    param = {
+        "after": after,
+        "limit": 100,
+    }
+    response = r.get(url, headers=headers, params=param, allow_redirects=False)
+    if response.status_code == 404:
         return None
-    return hot_list
+    else:
+        posts = response.json().get("data").get("children")
+        hot_list += [post.get("data").get("title") for post in posts]
+        after = response.json().get("data").get("after")
+        if after is not None:
+                recurse(subreddit, hot_list, after)
+        return hot_list

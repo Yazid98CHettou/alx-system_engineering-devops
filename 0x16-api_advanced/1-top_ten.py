@@ -1,19 +1,21 @@
 #!/usr/bin/python3
-import requests
-from sys import argv
+
+import requests as r
 
 
 def top_ten(subreddit):
-    """ get top 10 list reddits """
-    headers = {'User-Agent': 'Yony'}
-    url = "https://www.reddit.com/r/{}/hot.json".format(subreddit)
-    res = requests.get(url, headers=headers, allow_redirects=False)
-    if res.status_code == requests.codes.ok:
-        cnt = 0
-        res_json = res.json()
-        for subr in res_json['data']['children']:
-            if cnt < 10:
-                print(subr['data']['title'])
-                cnt += 1
-    else:
-        print('None')
+    """Print top 10 post given subreddit."""
+    url = "https://www.reddit.com/r/{}/hot/.json".format(subreddit)
+    headers = {
+        "User-Agent": "Mozilla/5.0 (X11; Linux x86_64; rv:73.0) \
+        Gecko/20100101 Firefox/73.0"
+    }
+    param = {
+        "limit": 10
+    }
+    response = r.get(url, headers=headers, params=param, allow_redirects=False)
+    if response.status_code == 404:
+        print("None")
+        return
+    results = response.json().get("data")
+    [print(top.get("data").get("title")) for top in results.get("children")]
