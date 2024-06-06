@@ -1,21 +1,19 @@
+#!/usr/bin/python3
 import requests
+from sys import argv
+
 
 def top_ten(subreddit):
-    headers = {'User-Agent': 'Mozilla/5.0'}
-    url = f"https://www.reddit.com/r/{subreddit}/hot.json"
-    params = {'limit': 10}
-
-    try:
-        response = requests.get(url, headers=headers, params=params, allow_redirects=False)
-        if response.status_code == 200:
-            data = response.json().get('data', {})
-            children = data.get('children', [])
-            if not children:
-                print("None")
-                return
-            for child in children:
-                print(child['data']['title'])
-        else:
-            print("None")
-    except Exception as e:
-        print("None")
+    """ get a top ten list reddits """
+    headers = {'User-Agent': 'Yony'}
+    url = "https://www.reddit.com/r/{}/hot.json".format(subreddit)
+    res = requests.get(url, headers=headers, allow_redirects=False)
+    if res.status_code == requests.codes.ok:
+        cont = 0
+        res_json = res.json()
+        for subr in res_json['data']['children']:
+            if cont < 10:
+                print(subr['data']['title'])
+                cont += 1
+    else:
+        print('None')
