@@ -1,6 +1,6 @@
 #!/usr/bin/python3
 import requests
-
+""" Modify prototype for handle pagination """
 
 
 def recurse(subreddit, hot_list=[], after='null'):
