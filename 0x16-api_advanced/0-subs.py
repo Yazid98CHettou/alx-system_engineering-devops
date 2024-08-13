@@ -1,5 +1,4 @@
-#!/usr/bin/python3
-import requests
+mport requests
 from sys import argv
 
 
